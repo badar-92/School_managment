@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduManage | School Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, var(--primary), var(--dark));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        .nav-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .nav-item.active {
+            background: rgba(255,255,255,0.15);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid var(--secondary);
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background-color: var(--secondary);
+        }
+        
+        .card.stats-card::before {
+            background-color: var(--success);
+        }
+        
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .card-icon {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            font-size: 2.5rem;
+            color: rgba(52, 152, 219, 0.2);
+        }
+        
+        /* Forms */
+        .form-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .form-container h3 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+        
+        .btn-danger {
+            background-color: var(--accent);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f9ff;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+        
+        .status-inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--accent);
+        }
+        
+        .status-pending {
+            background-color: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+        
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 5px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.view {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .action-btn.edit {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .action-btn.delete {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .action-btn.deactivate {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: var(--dark);
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        /* Page Content */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            margin-top: 30px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h3 {
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .close-modal {
+            color: var(--accent);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .close-modal:hover {
+            color: #c0392b;
+            transform: scale(1.1);
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .alert-warning {
+            background-color: rgba(243, 156, 18, 0.2);
+            border-left: 4px solid var(--warning);
+        }
+        
+        .alert-info {
+            background-color: rgba(52, 152, 219, 0.2);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .alert-success {
+            background-color: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid var(--success);
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .profile-section {
+            margin-bottom: 20px;
+        }
+        
+        .profile-section h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .history-table {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .history-table th {
+            background-color: var(--secondary);
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .history-table td {
+            padding: 10px;
+            font-size: 0.85rem;
+        }
+        
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .search-container button {
+            padding: 12px 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .logo h1, .logo p, .nav-text {
+                display: none;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 15px 0;
+            }
+            
+            .nav-item i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .user-info {
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">
+            <h1>EduManage</h1>
+            <p>School Management System</p>
+        </div>
+        <div class="nav-item active" data-page="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span class="nav-text">Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="students">
+            <i class="fas fa-user-graduate"></i>
+            <span class="nav-text">Students</span>
+        </div>
+        <div class="nav-item" data-page="teachers">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span class="nav-text">Teachers</span>
+        </div>
+        <div class="nav-item" data-page="attendance">
+            <i class="fas fa-calendar-check"></i>
+            <span class="nav-text">Attendance</span>
+        </div>
+        <div class="nav-item" data-page="fees">
+            <i class="fas fa-money-check-alt"></i>
+            <span class="nav-text">Fee Management</span>
+        </div>
+        <div class="nav-item" data-page="salary">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span class="nav-text">Salary Management</span>
+        </div>
+        <div class="nav-item" data-page="settings">
+            <i class="fas fa-cog"></i>
+            <span class="nav-text">Settings</span>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h2 id="page-title">Dashboard</h2>
+            <div class="user-info">
+                <img src="./my Pic.jpg" alt="Admin">
+                <div>
+                    <div>Badar Ahmad</div>
+                    <div style="font-size: 0.9rem; color: var(--gray);">Administrator</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Page -->
+        <div class="page active" id="dashboard">
+            <div class="dashboard">
+                <div class="card stats-card">
+                    <i class="fas fa-user-graduate card-icon"></i>
+                    <h3>Total Students</h3>
+                    <div class="stat-value" id="total-students">0</div>
+                    <div class="stat-label" id="student-stats">Active: 0 | Inactive: 0</div>
+                </div>
+                <div class="card stats-card">
+                    <i class="fas fa-chalkboard-teacher card-icon"></i>
+                    <h3>Total Teachers</h3>
+                    <div class="stat-value" id="total-teachers">0</div>
+                    <div class="stat-label" id="teacher-stats">Active: 0 | Inactive: 0</div>
+                </div>
+                <div class="card stats-card">
+                    <i class="fas fa-money-bill-wave card-icon"></i>
+                    <h3>Fee Collection</h3>
+                    <div class="stat-value" id="fee-collection">$0</div>
+                    <div class="stat-label" id="fee-stats">This Month | 0% Collected</div>
+                </div>
+                <div class="card stats-card">
+                    <i class="fas fa-calendar-alt card-icon"></i>
+                    <h3>Attendance</h3>
+                    <div class="stat-value" id="attendance-rate">0%</div>
+                    <div class="stat-label" id="attendance-stats">Student: 0% | Teacher: 0%</div>
+                </div>
+            </div>
+            
+            <div class="form-container">
+                <h3>Recent Activities</h3>
+                <div class="table-container">
+                    <table id="recent-activities">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>User</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Activities will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Students Page -->
+        <div class="page" id="students">
+            <div class="tabs">
+                <div class="tab active" data-tab="active-students">Active Students</div>
+                <div class="tab" data-tab="inactive-students">Inactive Students</div>
+                <div class="tab" data-tab="add-student">Add New Student</div>
+            </div>
+            
+            <div class="page-content" id="active-students">
+                <div class="search-container">
+                    <input type="text" id="student-search" placeholder="Search by name or ID...">
+                    <button class="btn" id="search-student-btn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="form-container">
+                    <h3>Active Student Records</h3>
+                    <div class="table-container">
+                        <table id="active-students-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Admission Date</th>
+                                    <th>Course</th>
+                                    <th>Fee</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Active students will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-content" id="inactive-students" style="display:none;">
+                <div class="form-container">
+                    <h3>Inactive Student Records</h3>
+                    <div class="table-container">
+                        <table id="inactive-students-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Admission Date</th>
+                                    <th>Leave Date</th>
+                                    <th>Course</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Inactive students will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-content" id="add-student" style="display:none;">
+                <div class="form-container">
+                    <h3>Add New Student</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="studentName">Full Name</label>
+                            <input type="text" id="studentName" class="form-control" placeholder="Enter student name">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentAge">Age</label>
+                            <input type="number" id="studentAge" class="form-control" placeholder="Enter age" min="5" max="25">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentCourse">Course</label>
+                            <select id="studentCourse" class="form-control">
+                                <option value="">Select Course</option>
+                                <option value="cs">Computer Science</option>
+                                <option value="math">Mathematics</option>
+                                <option value="physics">Physics</option>
+                                <option value="biology">Biology</option>
+                                <option value="chemistry">Chemistry</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentFee">Monthly Fee ($)</label>
+                            <input type="number" id="studentFee" class="form-control" placeholder="Enter fee amount" min="0" step="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="admissionDate">Admission Date</label>
+                            <input type="date" id="admissionDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="studentId">Student ID</label>
+                            <input type="text" id="studentId" class="form-control" placeholder="Generate automatically" disabled>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" id="add-student-btn"><i class="fas fa-plus"></i> Add Student</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Teachers Page -->
+        <div class="page" id="teachers">
+            <div class="tabs">
+                <div class="tab active" data-tab="active-teachers">Active Teachers</div>
+                <div class="tab" data-tab="inactive-teachers">Inactive Teachers</div>
+                <div class="tab" data-tab="add-teacher">Add New Teacher</div>
+            </div>
+            
+            <div class="page-content" id="active-teachers">
+                <div class="search-container">
+                    <input type="text" id="teacher-search" placeholder="Search by name or ID...">
+                    <button class="btn" id="search-teacher-btn"><i class="fas fa-search"></i> Search</button>
+                </div>
+                <div class="form-container">
+                    <h3>Active Teacher Records</h3>
+                    <div class="table-container">
+                        <table id="active-teachers-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Joining Date</th>
+                                    <th>Department</th>
+                                    <th>Salary</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Active teachers will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-content" id="inactive-teachers" style="display:none;">
+                <div class="form-container">
+                    <h3>Inactive Teacher Records</h3>
+                    <div class="table-container">
+                        <table id="inactive-teachers-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Joining Date</th>
+                                    <th>Leave Date</th>
+                                    <th>Department</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Inactive teachers will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-content" id="add-teacher" style="display:none;">
+                <div class="form-container">
+                    <h3>Add New Teacher</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="teacherName">Full Name</label>
+                            <input type="text" id="teacherName" class="form-control" placeholder="Enter teacher name">
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherAge">Age</label>
+                            <input type="number" id="teacherAge" class="form-control" placeholder="Enter age" min="25" max="65">
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherDept">Department</label>
+                            <select id="teacherDept" class="form-control">
+                                <option value="">Select Department</option>
+                                <option value="physics">Physics</option>
+                                <option value="math">Mathematics</option>
+                                <option value="cs">Computer Science</option>
+                                <option value="biology">Biology</option>
+                                <option value="chemistry">Chemistry</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherSalary">Monthly Salary ($)</label>
+                            <input type="number" id="teacherSalary" class="form-control" placeholder="Enter salary amount" min="0" step="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="joiningDate">Joining Date</label>
+                            <input type="date" id="joiningDate" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherId">Teacher ID</label>
+                            <input type="text" id="teacherId" class="form-control" placeholder="Generate automatically" disabled>
+                        </div>
+                    </div>
+                    <button class="btn btn-success" id="add-teacher-btn"><i class="fas fa-plus"></i> Add Teacher</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Attendance Page -->
+        <div class="page" id="attendance">
+            <div class="tabs">
+                <div class="tab active" data-tab="student-attendance">Student Attendance</div>
+                <div class="tab" data-tab="teacher-attendance">Teacher Attendance</div>
+            </div>
+            
+            <div class="page-content" id="student-attendance">
+                <div class="form-container">
+                    <h3>Record Student Attendance</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="studentAttendanceMonth">Select Month</label>
+                            <select id="studentAttendanceMonth" class="form-control">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10" selected>October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentAttendanceYear">Year</label>
+                            <select id="studentAttendanceYear" class="form-control">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023" >2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected >2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="studentAttendanceClass">Class</label>
+                            <select id="studentAttendanceClass" class="form-control">
+                                <option value="">All Classes</option>
+                                <option value="cs">Computer Science</option>
+                                <option value="math">Mathematics</option>
+                                <option value="physics">Physics</option>
+                                <option value="biology">Biology</option>
+                                <option value="chemistry">Chemistry</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" id="load-student-attendance"><i class="fas fa-sync"></i> Load Attendance</button>
+                </div>
+                
+                <div class="form-container">
+                    <h3 id="student-attendance-title">Student Attendance for October 2023</h3>
+                    <div class="table-container">
+                        <table id="student-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Attendance (%)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Student attendance will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn" id="save-student-attendance"><i class="fas fa-save"></i> Save Attendance Records</button>
+                </div>
+            </div>
+            
+            <div class="page-content" id="teacher-attendance" style="display:none;">
+                <div class="form-container">
+                    <h3>Record Teacher Attendance</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="teacherAttendanceMonth">Select Month</label>
+                            <select id="teacherAttendanceMonth" class="form-control">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10" selected>October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="teacherAttendanceYear">Year</label>
+                            <select id="teacherAttendanceYear" class="form-control">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected >2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" id="load-teacher-attendance"><i class="fas fa-sync"></i> Load Attendance</button>
+                </div>
+                
+                <div class="form-container">
+                    <h3 id="teacher-attendance-title">Teacher Attendance for October 2023</h3>
+                    <div class="table-container">
+                        <table id="teacher-attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Teacher ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Attendance (%)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Teacher attendance will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button class="btn" id="save-teacher-attendance"><i class="fas fa-save"></i> Save Attendance Records</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fee Management Page -->
+        <div class="page" id="fees">
+            <div class="tabs">
+                <div class="tab active" data-tab="fee-records">Fee Records</div>
+                <div class="tab" data-tab="collect-fee">Collect Fee</div>
+            </div>
+            
+            <div class="page-content" id="fee-records">
+                <div class="form-container">
+                    <h3>Student Fee Records</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="feeMonth">Select Month</label>
+                            <select id="feeMonth" class="form-control">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10" selected>October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="feeYear">Year</label>
+                            <select id="feeYear" class="form-control">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" id="load-fee-records"><i class="fas fa-sync"></i> Load Records</button>
+                </div>
+                
+                <div class="form-container">
+                    <h3 id="fee-records-title">Fee Records for October 2023</h3>
+                    <div class="table-container">
+                        <table id="fee-records-table">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Course</th>
+                                    <th>Fee Amount</th>
+                                    <th>Status</th>
+                                    <th>Paid Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Fee records will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-content" id="collect-fee" style="display:none;">
+                <div class="form-container">
+                    <h3>Collect Student Fee</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="collectStudentId">Student ID</label>
+                            <input type="text" id="collectStudentId" class="form-control" placeholder="Enter student ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="collectFeeMonth">Select Month</label>
+                            <select id="collectFeeMonth" class="form-control">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10" selected>October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="collectFeeYear">Year</label>
+                            <select id="collectFeeYear" class="form-control">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Note: Fee calculation will be based on attendance of the previous month.
+                        <br>Fine will be added for attendance below 85%.
+                    </div>
+                    <button class="btn btn-success" id="calculate-fee-btn"><i class="fas fa-calculator"></i> Calculate Fee</button>
+                    
+                    <div id="fee-details" style="display:none; margin-top: 20px;">
+                        <h4>Fee Details</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Student Name</label>
+                                <div class="form-control" id="fee-student-name"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Course</label>
+                                <div class="form-control" id="fee-student-course"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Monthly Fee</label>
+                                <div class="form-control" id="fee-monthly-amount"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Previous Month Attendance</label>
+                                <div class="form-control" id="fee-attendance"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Fine (if any)</label>
+                                <div class="form-control" id="fee-fine"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Total Amount Due</label>
+                                <div class="form-control" id="fee-total-amount"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" id="confirm-payment-btn"><i class="fas fa-check"></i> Confirm Payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Salary Management Page -->
+        <div class="page" id="salary">
+            <div class="tabs">
+                <div class="tab active" data-tab="salary-records">Salary Records</div>
+                <div class="tab" data-tab="pay-salary">Pay Salary</div>
+            </div>
+            
+            <div class="page-content" id="salary-records">
+                <div class="form-container">
+                    <h3>Teacher Salary Records</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="salaryMonth">Select Month</label>
+                            <select id="salaryMonth" class="form-control">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10" selected>October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="salaryYear">Year</label>
+                            <select id="salaryYear" class="form-control">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" id="load-salary-records"><i class="fas fa-sync"></i> Load Records</button>
+                </div>
+                
+                <div class="form-container">
+                    <h3 id="salary-records-title">Salary Records for October 2023</h3>
+                    <div class="table-container">
+                        <table id="salary-records-table">
+                            <thead>
+                                <tr>
+                                    <th>Teacher ID</th>
+                                    <th>Name</th>
+                                    <th>Department</th>
+                                    <th>Salary Amount</th>
+                                    <th>Status</th>
+                                    <th>Paid Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Salary records will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="page-content" id="pay-salary" style="display:none;">
+                <div class="form-container">
+                    <h3>Pay Teacher Salary</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="payTeacherId">Teacher ID</label>
+                            <input type="text" id="payTeacherId" class="form-control" placeholder="Enter teacher ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="paySalaryMonth">Select Month</label>
+                            <select id="paySalaryMonth" class="form-control">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10" selected>October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="paySalaryYear">Year</label>
+                            <select id="paySalaryYear" class="form-control">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                                <option value="2024">2024</option>
+                                <option value="2025" selected>2025</option>
+                                <option value="2026">2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Note: Salary calculation will be based on attendance of the previous month.
+                        <br>Deduction will be applied for attendance below 90%.
+                    </div>
+                    <button class="btn btn-success" id="calculate-salary-btn"><i class="fas fa-calculator"></i> Calculate Salary</button>
+                    
+                    <div id="salary-details" style="display:none; margin-top: 20px;">
+                        <h4>Salary Details</h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Teacher Name</label>
+                                <div class="form-control" id="salary-teacher-name"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Department</label>
+                                <div class="form-control" id="salary-teacher-dept"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Monthly Salary</label>
+                                <div class="form-control" id="salary-monthly-amount"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Previous Month Attendance</label>
+                                <div class="form-control" id="salary-attendance"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Deduction (if any)</label>
+                                <div class="form-control" id="salary-deduction"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Total Amount Payable</label>
+                                <div class="form-control" id="salary-total-amount"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-success" id="confirm-salary-btn"><i class="fas fa-check"></i> Confirm Payment</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Page -->
+        <div class="page" id="settings">
+            <div class="form-container">
+                <h3>System Settings</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="schoolName">School Name</label>
+                        <input type="text" id="schoolName" class="form-control" value="EduManage Academy">
+                    </div>
+                    <div class="form-group">
+                        <label for="schoolAddress">School Address</label>
+                        <input type="text" id="schoolAddress" class="form-control" value="123 Education Street, Knowledge City">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminName">Administrator Name</label>
+                        <input type="text" id="adminName" class="form-control" value="Badar Ahmad">
+                    </div>
+                    <div class="form-group">
+                        <label for="adminEmail">Administrator Email</label>
+                        <input type="email" id="adminEmail" class="form-control" value="badar@edumanage.edu">
+                    </div>
+                </div>
+                <button class="btn" id="save-settings-btn"><i class="fas fa-save"></i> Save Settings</button>
+            </div>
+            
+            <div class="form-container">
+                <h3>Data Management</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <button class="btn btn-warning" id="backup-data"><i class="fas fa-download"></i> Backup Data</button>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-danger" id="reset-data"><i class="fas fa-trash"></i> Reset All Data</button>
+                    </div>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Warning: Resetting data will permanently delete all records and cannot be undone.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>School Management System &copy; 2023 | Developed with ❤️ for Educational Institutions</p>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal" id="profile-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="profile-title">Student Profile</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="profile-content">
+                <!-- Profile content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="confirmation-message">Are you sure you want to perform this action?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" id="cancel-action">Cancel</button>
+                <button class="btn btn-danger" id="confirm-action">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage and initialization
+        let schoolData = {
+            students: [],
+            teachers: [],
+            studentAttendance: [],
+            teacherAttendance: [],
+            feeRecords: [],
+            salaryRecords: [],
+            activities: [],
+            settings: {
+                schoolName: "EduManage Academy",
+                schoolAddress: "123 Education Street, Knowledge City",
+                adminName: "Badar Ahmad",
+                adminEmail: "badar@edumanage.edu"
+            }
+        };
+
+        // Initialize data from localStorage
+        function initializeData() {
+            const savedData = localStorage.getItem('schoolData');
+            if (savedData) {
+                schoolData = JSON.parse(savedData);
+            } else {
+                // Add some sample data for demonstration
+                const today = new Date().toISOString().split('T')[0];
+                schoolData.activities.push(
+                    {date: today, activity: "System Initialized", user: "Badar Ahmad", details: "New system setup"}
+                );
+                
+                // Add sample students
+                schoolData.students.push({
+                    id: "S1001BA",
+                    name: "John Smith",
+                    age: 15,
+                    course: "Computer Science",
+                    fee: 250,
+                    admissionDate: "2023-09-01",
+                    status: "active"
+                });
+                
+                schoolData.students.push({
+                    id: "S1002MJ",
+                    name: "Mary Johnson",
+                    age: 16,
+                    course: "Mathematics",
+                    fee: 220,
+                    admissionDate: "2023-09-01",
+                    status: "active"
+                });
+                
+                // Add sample teachers
+                schoolData.teachers.push({
+                    id: "T2001AS",
+                    name: "Dr. Alan Smith",
+                    age: 42,
+                    department: "Physics",
+                    salary: 3500,
+                    joiningDate: "2023-01-15",
+                    status: "active"
+                });
+                
+                schoolData.teachers.push({
+                    id: "T2002RJ",
+                    name: "Prof. Rebecca Jones",
+                    age: 38,
+                    department: "Mathematics",
+                    salary: 3200,
+                    joiningDate: "2023-02-20",
+                    status: "active"
+                });
+                
+                // Add sample fee records
+                schoolData.feeRecords.push({
+                    studentId: "S1001BA",
+                    month: "10",
+                    year: "2023",
+                    amount: 250,
+                    paid: true,
+                    paidDate: "2023-10-05"
+                });
+                
+                // Add sample salary records
+                schoolData.salaryRecords.push({
+                    teacherId: "T2001AS",
+                    month: "10",
+                    year: "2023",
+                    amount: 3500,
+                    paid: true,
+                    paidDate: "2023-10-10"
+                });
+                
+                saveData();
+            }
+            updateDashboard();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('schoolData', JSON.stringify(schoolData));
+        }
+
+        // Add an activity to the log
+        function addActivity(activity, user, details) {
+            const today = new Date().toISOString().split('T')[0];
+            schoolData.activities.unshift({date: today, activity, user, details});
+            if (schoolData.activities.length > 10) schoolData.activities.pop();
+            updateDashboard();
+            saveData();
+        }
+
+        // Generate a unique ID
+        function generateId(prefix) {
+            return prefix + Math.floor(1000 + Math.random() * 9000);
+        }
+
+        // Update dashboard statistics
+        function updateDashboard() {
+            const activeStudents = schoolData.students.filter(s => s.status === 'active').length;
+            const inactiveStudents = schoolData.students.filter(s => s.status === 'inactive').length;
+            const activeTeachers = schoolData.teachers.filter(t => t.status === 'active').length;
+            const inactiveTeachers = schoolData.teachers.filter(t => t.status === 'inactive').length;
+            
+            // Calculate total fee collected for current month
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+            const monthlyFee = schoolData.feeRecords
+                .filter(f => f.month == currentMonth && f.year == currentYear)
+                .reduce((sum, fee) => sum + fee.amount, 0);
+            
+            // Calculate attendance rates
+            let studentAttendanceRate = 0;
+            let teacherAttendanceRate = 0;
+            if (schoolData.studentAttendance.length > 0) {
+                studentAttendanceRate = schoolData.studentAttendance
+                    .reduce((sum, a) => sum + a.attendance, 0) / schoolData.studentAttendance.length;
+            }
+            if (schoolData.teacherAttendance.length > 0) {
+                teacherAttendanceRate = schoolData.teacherAttendance
+                    .reduce((sum, a) => sum + a.attendance, 0) / schoolData.teacherAttendance.length;
+            }
+            
+            document.getElementById('total-students').textContent = schoolData.students.length;
+            document.getElementById('student-stats').textContent = `Active: ${activeStudents} | Inactive: ${inactiveStudents}`;
+            document.getElementById('total-teachers').textContent = schoolData.teachers.length;
+            document.getElementById('teacher-stats').textContent = `Active: ${activeTeachers} | Inactive: ${inactiveTeachers}`;
+            document.getElementById('fee-collection').textContent = `$${monthlyFee}`;
+            document.getElementById('fee-stats').textContent = `This Month | ${Math.round(monthlyFee > 0 ? 100 : 0)}% Collected`;
+            document.getElementById('attendance-rate').textContent = `${Math.round((studentAttendanceRate + teacherAttendanceRate) / 2)}%`;
+            document.getElementById('attendance-stats').textContent = `Student: ${Math.round(studentAttendanceRate)}% | Teacher: ${Math.round(teacherAttendanceRate)}%`;
+            
+            // Update recent activities
+            const activitiesTable = document.querySelector('#recent-activities tbody');
+            activitiesTable.innerHTML = '';
+            schoolData.activities.slice(0, 5).forEach(activity => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${activity.date}</td>
+                    <td>${activity.activity}</td>
+                    <td>${activity.user}</td>
+                    <td>${activity.details}</td>
+                `;
+                activitiesTable.appendChild(row);
+            });
+        }
+
+        // Page navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all nav items
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Add active class to clicked nav item
+                this.classList.add('active');
+                
+                // Hide all pages
+                document.querySelectorAll('.page').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show selected page
+                const pageId = this.getAttribute('data-page');
+                document.getElementById(pageId).classList.add('active');
+                
+                // Update page title
+                const pageTitle = this.querySelector('.nav-text').textContent;
+                document.getElementById('page-title').textContent = pageTitle;
+                
+                // Load data for the page
+                if (pageId === 'students') {
+                    loadStudentsData();
+                } else if (pageId === 'teachers') {
+                    loadTeachersData();
+                } else if (pageId === 'attendance') {
+                    loadStudentAttendance();
+                } else if (pageId === 'fees') {
+                    loadFeeRecords();
+                } else if (pageId === 'salary') {
+                    loadSalaryRecords();
+                } else if (pageId === 'settings') {
+                    loadSettings();
+                }
+            });
+        });
+
+        // Tab switching for student/teacher pages
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const container = this.parentElement;
+                const tabId = this.getAttribute('data-tab');
+                
+                // Remove active class from all tabs in the same container
+                container.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('active');
+                });
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Hide all content in the same page
+                const pageContent = container.nextElementSibling;
+                pageContent.querySelectorAll('.page-content').forEach(content => {
+                    content.style.display = 'none';
+                });
+                
+                // Show selected content
+                document.getElementById(tabId).style.display = 'block';
+                
+                // Load data if needed
+                if (tabId === 'fee-records') {
+                    loadFeeRecords();
+                } else if (tabId === 'salary-records') {
+                    loadSalaryRecords();
+                }
+            });
+        });
+
+        // Student management
+        document.getElementById('studentName').addEventListener('input', function() {
+            if (this.value.length > 0) {
+                const initials = this.value.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('studentId').value = `S${Math.floor(1000 + Math.random() * 9000)}${initials}`;
+            }
+        });
+
+        document.getElementById('add-student-btn').addEventListener('click', function() {
+            const studentId = document.getElementById('studentId').value;
+            const name = document.getElementById('studentName').value;
+            const age = document.getElementById('studentAge').value;
+            const course = document.getElementById('studentCourse').value;
+            const fee = document.getElementById('studentFee').value;
+            const admissionDate = document.getElementById('admissionDate').value;
+            
+            if (!name || !age || !course || !fee) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            const student = {
+                id: studentId,
+                name,
+                age,
+                course,
+                fee: parseInt(fee),
+                admissionDate,
+                status: 'active',
+                leaveDate: ''
+            };
+            
+            schoolData.students.push(student);
+            saveData();
+            addActivity('New Student Added', 'Badar Ahmad', `${name} - ${course}`);
+            
+            // Reset form
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentAge').value = '';
+            document.getElementById('studentCourse').value = '';
+            document.getElementById('studentFee').value = '';
+            document.getElementById('studentId').value = '';
+            
+            // Show active students tab
+            document.querySelector('[data-tab="active-students"]').click();
+            loadStudentsData();
+        });
+
+        function loadStudentsData() {
+            const activeStudents = schoolData.students.filter(s => s.status === 'active');
+            const inactiveStudents = schoolData.students.filter(s => s.status === 'inactive');
+            
+            // Active students table
+            const activeTable = document.querySelector('#active-students-table tbody');
+            activeTable.innerHTML = '';
+            activeStudents.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.admissionDate}</td>
+                    <td>${student.course}</td>
+                    <td>$${student.fee}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>
+                        <button class="action-btn view" data-id="${student.id}" data-type="student"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn deactivate" data-id="${student.id}"><i class="fas fa-user-slash"></i></button>
+                    </td>
+                `;
+                activeTable.appendChild(row);
+            });
+            
+            // Inactive students table
+            const inactiveTable = document.querySelector('#inactive-students-table tbody');
+            inactiveTable.innerHTML = '';
+            inactiveStudents.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.admissionDate}</td>
+                    <td>${student.leaveDate}</td>
+                    <td>${student.course}</td>
+                    <td>
+                        <button class="action-btn view" data-id="${student.id}" data-type="student"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                inactiveTable.appendChild(row);
+            });
+            
+            // Add event listeners for buttons
+            addProfileViewListeners();
+            addDeactivateListeners();
+        }
+
+        // Teacher management
+        document.getElementById('teacherName').addEventListener('input', function() {
+            if (this.value.length > 0) {
+                const initials = this.value.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('teacherId').value = `T${Math.floor(1000 + Math.random() * 9000)}${initials}`;
+            }
+        });
+
+        document.getElementById('add-teacher-btn').addEventListener('click', function() {
+            const teacherId = document.getElementById('teacherId').value;
+            const name = document.getElementById('teacherName').value;
+            const age = document.getElementById('teacherAge').value;
+            const department = document.getElementById('teacherDept').value;
+            const salary = document.getElementById('teacherSalary').value;
+            const joiningDate = document.getElementById('joiningDate').value;
+            
+            if (!name || !age || !department || !salary) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            const teacher = {
+                id: teacherId,
+                name,
+                age,
+                department,
+                salary: parseInt(salary),
+                joiningDate,
+                status: 'active',
+                leaveDate: ''
+            };
+            
+            schoolData.teachers.push(teacher);
+            saveData();
+            addActivity('New Teacher Added', 'Badar Ahmad', `${name} - ${department}`);
+            
+            // Reset form
+            document.getElementById('teacherName').value = '';
+            document.getElementById('teacherAge').value = '';
+            document.getElementById('teacherDept').value = '';
+            document.getElementById('teacherSalary').value = '';
+            document.getElementById('teacherId').value = '';
+            
+            // Show active teachers tab
+            document.querySelector('[data-tab="active-teachers"]').click();
+            loadTeachersData();
+        });
+
+        function loadTeachersData() {
+            const activeTeachers = schoolData.teachers.filter(t => t.status === 'active');
+            const inactiveTeachers = schoolData.teachers.filter(t => t.status === 'inactive');
+            
+            // Active teachers table
+            const activeTable = document.querySelector('#active-teachers-table tbody');
+            activeTable.innerHTML = '';
+            activeTeachers.forEach(teacher => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${teacher.id}</td>
+                    <td>${teacher.name}</td>
+                    <td>${teacher.joiningDate}</td>
+                    <td>${teacher.department}</td>
+                    <td>$${teacher.salary}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>
+                        <button class="action-btn view" data-id="${teacher.id}" data-type="teacher"><i class="fas fa-eye"></i></button>
+                        <button class="action-btn deactivate" data-id="${teacher.id}"><i class="fas fa-user-slash"></i></button>
+                    </td>
+                `;
+                activeTable.appendChild(row);
+            });
+            
+            // Inactive teachers table
+            const inactiveTable = document.querySelector('#inactive-teachers-table tbody');
+            inactiveTable.innerHTML = '';
+            inactiveTeachers.forEach(teacher => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${teacher.id}</td>
+                    <td>${teacher.name}</td>
+                    <td>${teacher.joiningDate}</td>
+                    <td>${teacher.leaveDate}</td>
+                    <td>${teacher.department}</td>
+                    <td>
+                        <button class="action-btn view" data-id="${teacher.id}" data-type="teacher"><i class="fas fa-eye"></i></button>
+                    </td>
+                `;
+                inactiveTable.appendChild(row);
+            });
+            
+            // Add event listeners for buttons
+            addProfileViewListeners();
+            addDeactivateListeners();
+        }
+
+        // Add event listeners for view profile buttons
+        function addProfileViewListeners() {
+            document.querySelectorAll('.action-btn.view').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const type = this.getAttribute('data-type');
+                    showProfile(id, type);
+                });
+            });
+        }
+
+        // Add event listeners for deactivate buttons
+        function addDeactivateListeners() {
+            document.querySelectorAll('.action-btn.deactivate').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const type = this.closest('table').id.includes('student') ? 'student' : 'teacher';
+                    
+                    if (type === 'student') {
+                        const student = schoolData.students.find(s => s.id === id);
+                        if (student) {
+                            document.getElementById('confirmation-message').textContent = 
+                                `Are you sure you want to mark ${student.name} as inactive?`;
+                            
+                            const modal = document.getElementById('confirmation-modal');
+                            modal.style.display = 'block';
+                            
+                            document.getElementById('confirm-action').onclick = function() {
+                                student.status = 'inactive';
+                                student.leaveDate = new Date().toISOString().split('T')[0];
+                                saveData();
+                                addActivity('Student Deactivated', 'Badar Ahmad', `${student.name} (${student.id})`);
+                                loadStudentsData();
+                                modal.style.display = 'none';
+                            };
+                        }
+                    } else {
+                        const teacher = schoolData.teachers.find(t => t.id === id);
+                        if (teacher) {
+                            document.getElementById('confirmation-message').textContent = 
+                                `Are you sure you want to mark ${teacher.name} as inactive?`;
+                            
+                            const modal = document.getElementById('confirmation-modal');
+                            modal.style.display = 'block';
+                            
+                            document.getElementById('confirm-action').onclick = function() {
+                                teacher.status = 'inactive';
+                                teacher.leaveDate = new Date().toISOString().split('T')[0];
+                                saveData();
+                                addActivity('Teacher Deactivated', 'Badar Ahmad', `${teacher.name} (${teacher.id})`);
+                                loadTeachersData();
+                                modal.style.display = 'none';
+                            };
+                        }
+                    }
+                    
+                    document.getElementById('cancel-action').onclick = function() {
+                        modal.style.display = 'none';
+                    };
+                    
+                    document.querySelector('.close-modal').onclick = function() {
+                        modal.style.display = 'none';
+                    };
+                });
+            });
+        }
+
+        // Show profile modal
+        function showProfile(id, type) {
+            const profileModal = document.getElementById('profile-modal');
+            const profileTitle = document.getElementById('profile-title');
+            const profileContent = document.getElementById('profile-content');
+            
+            if (type === 'student') {
+                const student = schoolData.students.find(s => s.id === id);
+                if (student) {
+                    profileTitle.textContent = `Student Profile: ${student.name}`;
+                    
+                    // Get student attendance history
+                    const attendanceHistory = schoolData.studentAttendance
+                        .filter(a => a.studentId === id)
+                        .map(a => ({ 
+                            month: a.month, 
+                            year: a.year, 
+                            attendance: a.attendance 
+                        }));
+                    
+                    // Get fee payment history
+                    const feeHistory = schoolData.feeRecords
+                        .filter(f => f.studentId === id);
+                    
+                    profileContent.innerHTML = `
+                        <div class="profile-grid">
+                            <div>
+                                <div class="profile-section">
+                                    <h4>Personal Information</h4>
+                                    <p><strong>ID:</strong> ${student.id}</p>
+                                    <p><strong>Name:</strong> ${student.name}</p>
+                                    <p><strong>Age:</strong> ${student.age}</p>
+                                    <p><strong>Course:</strong> ${student.course}</p>
+                                    <p><strong>Admission Date:</strong> ${student.admissionDate}</p>
+                                    <p><strong>Status:</strong> ${student.status === 'active' ? 
+                                        '<span class="status-badge status-active">Active</span>' : 
+                                        `<span class="status-badge status-inactive">Inactive</span> (Left on: ${student.leaveDate})`}</p>
+                                </div>
+                                
+                                <div class="profile-section">
+                                    <h4>Fee Information</h4>
+                                    <p><strong>Monthly Fee:</strong> $${student.fee}</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="profile-section">
+                                    <h4>Attendance History</h4>
+                                    ${attendanceHistory.length > 0 ? `
+                                        <table class="history-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Month/Year</th>
+                                                    <th>Attendance</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${attendanceHistory.map(a => `
+                                                    <tr>
+                                                        <td>${a.month}/${a.year}</td>
+                                                        <td>${a.attendance}%</td>
+                                                        <td>${a.attendance >= 85 ? 
+                                                            '<span class="status-badge status-active">Good</span>' : 
+                                                            '<span class="status-badge status-inactive">Low</span>'}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    ` : '<p>No attendance records found</p>'}
+                                </div>
+                                
+                                <div class="profile-section">
+                                    <h4>Payment History</h4>
+                                    ${feeHistory.length > 0 ? `
+                                        <table class="history-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Month/Year</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Date Paid</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${feeHistory.map(f => `
+                                                    <tr>
+                                                        <td>${f.month}/${f.year}</td>
+                                                        <td>$${f.amount}</td>
+                                                        <td>${f.paid ? 
+                                                            '<span class="status-badge status-active">Paid</span>' : 
+                                                            '<span class="status-badge status-inactive">Pending</span>'}</td>
+                                                        <td>${f.paidDate || '-'}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    ` : '<p>No payment records found</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                const teacher = schoolData.teachers.find(t => t.id === id);
+                if (teacher) {
+                    profileTitle.textContent = `Teacher Profile: ${teacher.name}`;
+                    
+                    // Get teacher attendance history
+                    const attendanceHistory = schoolData.teacherAttendance
+                        .filter(a => a.teacherId === id)
+                        .map(a => ({ 
+                            month: a.month, 
+                            year: a.year, 
+                            attendance: a.attendance 
+                        }));
+                    
+                    // Get salary payment history
+                    const salaryHistory = schoolData.salaryRecords
+                        .filter(s => s.teacherId === id);
+                    
+                    profileContent.innerHTML = `
+                        <div class="profile-grid">
+                            <div>
+                                <div class="profile-section">
+                                    <h4>Personal Information</h4>
+                                    <p><strong>ID:</strong> ${teacher.id}</p>
+                                    <p><strong>Name:</strong> ${teacher.name}</p>
+                                    <p><strong>Age:</strong> ${teacher.age}</p>
+                                    <p><strong>Department:</strong> ${teacher.department}</p>
+                                    <p><strong>Joining Date:</strong> ${teacher.joiningDate}</p>
+                                    <p><strong>Status:</strong> ${teacher.status === 'active' ? 
+                                        '<span class="status-badge status-active">Active</span>' : 
+                                        `<span class="status-badge status-inactive">Inactive</span> (Left on: ${teacher.leaveDate})`}</p>
+                                </div>
+                                
+                                <div class="profile-section">
+                                    <h4>Salary Information</h4>
+                                    <p><strong>Monthly Salary:</strong> $${teacher.salary}</p>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="profile-section">
+                                    <h4>Attendance History</h4>
+                                    ${attendanceHistory.length > 0 ? `
+                                        <table class="history-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Month/Year</th>
+                                                    <th>Attendance</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${attendanceHistory.map(a => `
+                                                    <tr>
+                                                        <td>${a.month}/${a.year}</td>
+                                                        <td>${a.attendance}%</td>
+                                                        <td>${a.attendance >= 90 ? 
+                                                            '<span class="status-badge status-active">Good</span>' : 
+                                                            '<span class="status-badge status-inactive">Low</span>'}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    ` : '<p>No attendance records found</p>'}
+                                </div>
+                                
+                                <div class="profile-section">
+                                    <h4>Payment History</h4>
+                                    ${salaryHistory.length > 0 ? `
+                                        <table class="history-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Month/Year</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Date Paid</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${salaryHistory.map(s => `
+                                                    <tr>
+                                                        <td>${s.month}/${s.year}</td>
+                                                        <td>$${s.amount}</td>
+                                                        <td>${s.paid ? 
+                                                            '<span class="status-badge status-active">Paid</span>' : 
+                                                            '<span class="status-badge status-inactive">Pending</span>'}</td>
+                                                        <td>${s.paidDate || '-'}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    ` : '<p>No payment records found</p>'}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            profileModal.style.display = 'block';
+            
+            // Close modal
+            document.querySelector('#profile-modal .close-modal').onclick = function() {
+                profileModal.style.display = 'none';
+            };
+        }
+
+        // Attendance management
+        document.getElementById('load-student-attendance').addEventListener('click', loadStudentAttendance);
+        document.getElementById('save-student-attendance').addEventListener('click', saveStudentAttendance);
+        
+        // Teacher attendance
+        document.getElementById('load-teacher-attendance').addEventListener('click', loadTeacherAttendance);
+        document.getElementById('save-teacher-attendance').addEventListener('click', saveTeacherAttendance);
+        
+        function loadStudentAttendance() {
+            const month = document.getElementById('studentAttendanceMonth').value;
+            const year = document.getElementById('studentAttendanceYear').value;
+            const course = document.getElementById('studentAttendanceClass').value;
+            
+            // Update title
+            document.getElementById('student-attendance-title').textContent = 
+                `Student Attendance for ${getMonthName(month)} ${year}`;
+            
+            const tableBody = document.querySelector('#student-attendance-table tbody');
+            tableBody.innerHTML = '';
+            
+            // Get active students for the selected course (if any)
+            let students = schoolData.students.filter(s => s.status === 'active');
+            if (course) {
+                students = students.filter(s => s.course.toLowerCase() === course.toLowerCase());
+            }
+            
+            students.forEach(student => {
+                // Find existing attendance record for this month
+                const existingRecord = schoolData.studentAttendance.find(a => 
+                    a.studentId === student.id && 
+                    a.month == month && 
+                    a.year == year
+                );
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.course}</td>
+                    <td>
+                        <input type="number" class="form-control" value="${existingRecord ? existingRecord.attendance : 0}" min="0" max="100" data-id="${student.id}">
+                    </td>
+                    <td>${existingRecord ? 
+                        (existingRecord.attendance >= 85 ? 
+                            '<span class="status-badge status-active">Good</span>' : 
+                            '<span class="status-badge status-inactive">Low</span>') : 
+                        '<span class="status-badge status-pending">Not Recorded</span>'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function saveStudentAttendance() {
+            const month = document.getElementById('studentAttendanceMonth').value;
+            const year = document.getElementById('studentAttendanceYear').value;
+            
+            const inputs = document.querySelectorAll('#student-attendance-table tbody input');
+            inputs.forEach(input => {
+                const studentId = input.getAttribute('data-id');
+                const attendance = parseInt(input.value);
+                
+                // Find existing record
+                const existingIndex = schoolData.studentAttendance.findIndex(a => 
+                    a.studentId === studentId && 
+                    a.month == month && 
+                    a.year == year
+                );
+                
+                if (existingIndex !== -1) {
+                    // Update existing record
+                    schoolData.studentAttendance[existingIndex].attendance = attendance;
+                } else {
+                    // Create new record
+                    schoolData.studentAttendance.push({
+                        studentId,
+                        month,
+                        year,
+                        attendance
+                    });
+                }
+            });
+            
+            saveData();
+            addActivity('Student Attendance Updated', 'Badar Ahmad', 
+                `For ${getMonthName(month)} ${year}`);
+            alert('Attendance records saved successfully!');
+        }
+        
+        function loadTeacherAttendance() {
+            const month = document.getElementById('teacherAttendanceMonth').value;
+            const year = document.getElementById('teacherAttendanceYear').value;
+            
+            // Update title
+            document.getElementById('teacher-attendance-title').textContent = 
+                `Teacher Attendance for ${getMonthName(month)} ${year}`;
+            
+            const tableBody = document.querySelector('#teacher-attendance-table tbody');
+            tableBody.innerHTML = '';
+            
+            // Get active teachers
+            const teachers = schoolData.teachers.filter(t => t.status === 'active');
+            
+            teachers.forEach(teacher => {
+                // Find existing attendance record for this month
+                const existingRecord = schoolData.teacherAttendance.find(a => 
+                    a.teacherId === teacher.id && 
+                    a.month == month && 
+                    a.year == year
+                );
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${teacher.id}</td>
+                    <td>${teacher.name}</td>
+                    <td>${teacher.department}</td>
+                    <td>
+                        <input type="number" class="form-control" value="${existingRecord ? existingRecord.attendance : 0}" min="0" max="100" data-id="${teacher.id}">
+                    </td>
+                    <td>${existingRecord ? 
+                        (existingRecord.attendance >= 90 ? 
+                            '<span class="status-badge status-active">Good</span>' : 
+                            '<span class="status-badge status-inactive">Low</span>') : 
+                        '<span class="status-badge status-pending">Not Recorded</span>'}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function saveTeacherAttendance() {
+            const month = document.getElementById('teacherAttendanceMonth').value;
+            const year = document.getElementById('teacherAttendanceYear').value;
+            
+            const inputs = document.querySelectorAll('#teacher-attendance-table tbody input');
+            inputs.forEach(input => {
+                const teacherId = input.getAttribute('data-id');
+                const attendance = parseInt(input.value);
+                
+                // Find existing record
+                const existingIndex = schoolData.teacherAttendance.findIndex(a => 
+                    a.teacherId === teacherId && 
+                    a.month == month && 
+                    a.year == year
+                );
+                
+                if (existingIndex !== -1) {
+                    // Update existing record
+                    schoolData.teacherAttendance[existingIndex].attendance = attendance;
+                } else {
+                    // Create new record
+                    schoolData.teacherAttendance.push({
+                        teacherId,
+                        month,
+                        year,
+                        attendance
+                    });
+                }
+            });
+            
+            saveData();
+            addActivity('Teacher Attendance Updated', 'Badar Ahmad', 
+                `For ${getMonthName(month)} ${year}`);
+            alert('Attendance records saved successfully!');
+        }
+        
+        // Helper function to get month name
+        function getMonthName(monthNumber) {
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            return months[parseInt(monthNumber) - 1];
+        }
+        
+        // Fee management
+        document.getElementById('calculate-fee-btn').addEventListener('click', calculateFee);
+        document.getElementById('confirm-payment-btn').addEventListener('click', confirmFeePayment);
+        
+        function calculateFee() {
+            const studentId = document.getElementById('collectStudentId').value;
+            const month = document.getElementById('collectFeeMonth').value;
+            const year = document.getElementById('collectFeeYear').value;
+            
+            const student = schoolData.students.find(s => s.id === studentId);
+            if (!student) {
+                alert('Student not found!');
+                return;
+            }
+            
+            // Check if fee already paid for this month
+            const existingPayment = schoolData.feeRecords.find(f => 
+                f.studentId === studentId && 
+                f.month == month && 
+                f.year == year
+            );
+            
+            if (existingPayment && existingPayment.paid) {
+                alert('Fee already paid for this month!');
+                return;
+            }
+            
+            // Calculate previous month
+            let prevMonth = parseInt(month) - 1;
+            let prevYear = parseInt(year);
+            if (prevMonth === 0) {
+                prevMonth = 12;
+                prevYear--;
+            }
+            
+            // Find attendance for previous month
+            const attendanceRecord = schoolData.studentAttendance.find(a => 
+                a.studentId === studentId && 
+                a.month == prevMonth && 
+                a.year == prevYear
+            );
+            
+            const attendance = attendanceRecord ? attendanceRecord.attendance : 0;
+            
+            // ADD FINE for low attendance (instead of deduction)
+            let fine = 0;
+            if (attendance < 85) {
+                // 0.5% fine for each percentage point below 85%
+                fine = (85 - attendance) * 0.5 * student.fee / 100;
+            }
+            
+            const totalFee = student.fee + fine;
+            
+            // Display fee details
+            document.getElementById('fee-student-name').textContent = student.name;
+            document.getElementById('fee-student-course').textContent = student.course;
+            document.getElementById('fee-monthly-amount').textContent = `$${student.fee}`;
+            document.getElementById('fee-attendance').textContent = `${attendance}%`;
+            document.getElementById('fee-fine').textContent = `$${fine.toFixed(2)}`;
+            document.getElementById('fee-total-amount').textContent = `$${totalFee.toFixed(2)}`;
+            
+            document.getElementById('fee-details').style.display = 'block';
+        }
+        
+        function confirmFeePayment() {
+            const studentId = document.getElementById('collectStudentId').value;
+            const month = document.getElementById('collectFeeMonth').value;
+            const year = document.getElementById('collectFeeYear').value;
+            
+            const student = schoolData.students.find(s => s.id === studentId);
+            if (!student) {
+                alert('Student not found!');
+                return;
+            }
+            
+            // Calculate previous month
+            let prevMonth = parseInt(month) - 1;
+            let prevYear = parseInt(year);
+            if (prevMonth === 0) {
+                prevMonth = 12;
+                prevYear--;
+            }
+            
+            // Find attendance for previous month
+            const attendanceRecord = schoolData.studentAttendance.find(a => 
+                a.studentId === studentId && 
+                a.month == prevMonth && 
+                a.year == prevYear
+            );
+            
+            const attendance = attendanceRecord ? attendanceRecord.attendance : 0;
+            
+            // ADD FINE for low attendance (instead of deduction)
+            let fine = 0;
+            if (attendance < 85) {
+                // 0.5% fine for each percentage point below 85%
+                fine = (85 - attendance) * 0.5 * student.fee / 100;
+            }
+            
+            const totalFee = student.fee + fine;
+            
+            // Record payment
+            const paymentDate = new Date().toISOString().split('T')[0];
+            schoolData.feeRecords.push({
+                studentId,
+                month,
+                year,
+                amount: totalFee,
+                paid: true,
+                paidDate: paymentDate
+            });
+            
+            saveData();
+            addActivity('Fee Collected', 'Badar Ahmad', 
+                `$${totalFee.toFixed(2)} from ${student.name} for ${getMonthName(month)} ${year}`);
+            alert('Payment recorded successfully!');
+            
+            // Reset form
+            document.getElementById('fee-details').style.display = 'none';
+            document.getElementById('collectStudentId').value = '';
+        }
+        
+        // Load fee records
+        function loadFeeRecords() {
+            const month = document.getElementById('feeMonth').value;
+            const year = document.getElementById('feeYear').value;
+            
+            // Update title
+            document.getElementById('fee-records-title').textContent = 
+                `Fee Records for ${getMonthName(month)} ${year}`;
+            
+            const tableBody = document.querySelector('#fee-records-table tbody');
+            tableBody.innerHTML = '';
+            
+            // Get all students
+            schoolData.students.forEach(student => {
+                // Find fee record for this student for the selected month
+                const feeRecord = schoolData.feeRecords.find(f => 
+                    f.studentId === student.id && 
+                    f.month == month && 
+                    f.year == year
+                );
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.course}</td>
+                    <td>$${student.fee}</td>
+                    <td>
+                        ${feeRecord && feeRecord.paid ? 
+                            '<span class="status-badge status-active">Paid</span>' : 
+                            '<span class="status-badge status-inactive">Unpaid</span>'}
+                    </td>
+                    <td>${feeRecord && feeRecord.paidDate ? feeRecord.paidDate : '-'}</td>
+                    <td>
+                        ${!feeRecord || !feeRecord.paid ? 
+                            `<button class="action-btn view collect-fee-btn" data-id="${student.id}" data-month="${month}" data-year="${year}">
+                                <i class="fas fa-money-bill"></i> Collect Fee
+                            </button>` : 
+                            `<button class="action-btn view" data-id="${student.id}" data-type="student">
+                                <i class="fas fa-eye"></i> View
+                            </button>`}
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for collect fee buttons
+            document.querySelectorAll('.collect-fee-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const studentId = this.getAttribute('data-id');
+                    const month = this.getAttribute('data-month');
+                    const year = this.getAttribute('data-year');
+                    
+                    // Set values in the collect fee tab
+                    document.getElementById('collectStudentId').value = studentId;
+                    document.getElementById('collectFeeMonth').value = month;
+                    document.getElementById('collectFeeYear').value = year;
+                    
+                    // Switch to collect fee tab
+                    document.querySelector('[data-tab="collect-fee"]').click();
+                    
+                    // Calculate fee
+                    calculateFee();
+                });
+            });
+        }
+        
+        // Load salary records
+        function loadSalaryRecords() {
+            const month = document.getElementById('salaryMonth').value;
+            const year = document.getElementById('salaryYear').value;
+            
+            // Update title
+            document.getElementById('salary-records-title').textContent = 
+                `Salary Records for ${getMonthName(month)} ${year}`;
+            
+            const tableBody = document.querySelector('#salary-records-table tbody');
+            tableBody.innerHTML = '';
+            
+            // Get all teachers
+            schoolData.teachers.forEach(teacher => {
+                // Find salary record for this teacher for the selected month
+                const salaryRecord = schoolData.salaryRecords.find(s => 
+                    s.teacherId === teacher.id && 
+                    s.month == month && 
+                    s.year == year
+                );
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${teacher.id}</td>
+                    <td>${teacher.name}</td>
+                    <td>${teacher.department}</td>
+                    <td>$${teacher.salary}</td>
+                    <td>
+                        ${salaryRecord && salaryRecord.paid ? 
+                            '<span class="status-badge status-active">Paid</span>' : 
+                            '<span class="status-badge status-inactive">Unpaid</span>'}
+                    </td>
+                    <td>${salaryRecord && salaryRecord.paidDate ? salaryRecord.paidDate : '-'}</td>
+                    <td>
+                        ${!salaryRecord || !salaryRecord.paid ? 
+                            `<button class="action-btn view pay-salary-btn" data-id="${teacher.id}" data-month="${month}" data-year="${year}">
+                                <i class="fas fa-money-bill"></i> Pay Salary
+                            </button>` : 
+                            `<button class="action-btn view" data-id="${teacher.id}" data-type="teacher">
+                                <i class="fas fa-eye"></i> View
+                            </button>`}
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for pay salary buttons
+            document.querySelectorAll('.pay-salary-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const teacherId = this.getAttribute('data-id');
+                    const month = this.getAttribute('data-month');
+                    const year = this.getAttribute('data-year');
+                    
+                    // Set values in the pay salary tab
+                    document.getElementById('payTeacherId').value = teacherId;
+                    document.getElementById('paySalaryMonth').value = month;
+                    document.getElementById('paySalaryYear').value = year;
+                    
+                    // Switch to pay salary tab
+                    document.querySelector('[data-tab="pay-salary"]').click();
+                    
+                    // Calculate salary
+                    calculateSalary();
+                });
+            });
+        }
+        
+        // Salary management
+        document.getElementById('calculate-salary-btn').addEventListener('click', calculateSalary);
+        document.getElementById('confirm-salary-btn').addEventListener('click', confirmSalaryPayment);
+        
+        function calculateSalary() {
+            const teacherId = document.getElementById('payTeacherId').value;
+            const month = document.getElementById('paySalaryMonth').value;
+            const year = document.getElementById('paySalaryYear').value;
+            
+            const teacher = schoolData.teachers.find(t => t.id === teacherId);
+            if (!teacher) {
+                alert('Teacher not found!');
+                return;
+            }
+            
+            // Check if salary already paid for this month
+            const existingPayment = schoolData.salaryRecords.find(s => 
+                s.teacherId === teacherId && 
+                s.month == month && 
+                s.year == year
+            );
+            
+            if (existingPayment && existingPayment.paid) {
+                alert('Salary already paid for this month!');
+                return;
+            }
+            
+            // Calculate previous month
+            let prevMonth = parseInt(month) - 1;
+            let prevYear = parseInt(year);
+            if (prevMonth === 0) {
+                prevMonth = 12;
+                prevYear--;
+            }
+            
+            // Find attendance for previous month
+            const attendanceRecord = schoolData.teacherAttendance.find(a => 
+                a.teacherId === teacherId && 
+                a.month == prevMonth && 
+                a.year == prevYear
+            );
+            
+            const attendance = attendanceRecord ? attendanceRecord.attendance : 0;
+            
+            // DEDUCTION for low attendance
+            let deduction = 0;
+            if (attendance < 90) {
+                // 0.5% deduction for each percentage point below 90%
+                deduction = (90 - attendance) * 0.5 * teacher.salary / 100;
+            }
+            
+            const totalSalary = teacher.salary - deduction;
+            
+            // Display salary details
+            document.getElementById('salary-teacher-name').textContent = teacher.name;
+            document.getElementById('salary-teacher-dept').textContent = teacher.department;
+            document.getElementById('salary-monthly-amount').textContent = `$${teacher.salary}`;
+            document.getElementById('salary-attendance').textContent = `${attendance}%`;
+            document.getElementById('salary-deduction').textContent = `$${deduction.toFixed(2)}`;
+            document.getElementById('salary-total-amount').textContent = `$${totalSalary.toFixed(2)}`;
+            
+            document.getElementById('salary-details').style.display = 'block';
+        }
+        
+        function confirmSalaryPayment() {
+            const teacherId = document.getElementById('payTeacherId').value;
+            const month = document.getElementById('paySalaryMonth').value;
+            const year = document.getElementById('paySalaryYear').value;
+            
+            const teacher = schoolData.teachers.find(t => t.id === teacherId);
+            if (!teacher) {
+                alert('Teacher not found!');
+                return;
+            }
+            
+            // Calculate previous month
+            let prevMonth = parseInt(month) - 1;
+            let prevYear = parseInt(year);
+            if (prevMonth === 0) {
+                prevMonth = 12;
+                prevYear--;
+            }
+            
+            // Find attendance for previous month
+            const attendanceRecord = schoolData.teacherAttendance.find(a => 
+                a.teacherId === teacherId && 
+                a.month == prevMonth && 
+                a.year == prevYear
+            );
+            
+            const attendance = attendanceRecord ? attendanceRecord.attendance : 0;
+            
+            // DEDUCTION for low attendance
+            let deduction = 0;
+            if (attendance < 90) {
+                // 0.5% deduction for each percentage point below 90%
+                deduction = (90 - attendance) * 0.5 * teacher.salary / 100;
+            }
+            
+            const totalSalary = teacher.salary - deduction;
+            
+            // Record payment
+            const paymentDate = new Date().toISOString().split('T')[0];
+            schoolData.salaryRecords.push({
+                teacherId,
+                month,
+                year,
+                amount: totalSalary,
+                paid: true,
+                paidDate: paymentDate
+            });
+            
+            saveData();
+            addActivity('Salary Paid', 'Badar Ahmad', 
+                `$${totalSalary.toFixed(2)} to ${teacher.name} for ${getMonthName(month)} ${year}`);
+            alert('Salary payment recorded successfully!');
+            
+            // Reset form
+            document.getElementById('salary-details').style.display = 'none';
+            document.getElementById('payTeacherId').value = '';
+        }
+        
+        // Settings management
+        function loadSettings() {
+            document.getElementById('schoolName').value = schoolData.settings.schoolName;
+            document.getElementById('schoolAddress').value = schoolData.settings.schoolAddress;
+            document.getElementById('adminName').value = schoolData.settings.adminName;
+            document.getElementById('adminEmail').value = schoolData.settings.adminEmail;
+        }
+        
+        document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
+        document.getElementById('reset-data').addEventListener('click', resetData);
+        
+        function saveSettings() {
+            schoolData.settings.schoolName = document.getElementById('schoolName').value;
+            schoolData.settings.schoolAddress = document.getElementById('schoolAddress').value;
+            schoolData.settings.adminName = document.getElementById('adminName').value;
+            schoolData.settings.adminEmail = document.getElementById('adminEmail').value;
+            
+            saveData();
+            addActivity('Settings Updated', 'Badar Ahmad', 'System settings modified');
+            alert('Settings saved successfully!');
+        }
+        
+        function resetData() {
+            document.getElementById('confirmation-message').textContent = 
+                "Are you sure you want to reset all data? This action cannot be undone!";
+            
+            const modal = document.getElementById('confirmation-modal');
+            modal.style.display = 'block';
+            
+            document.getElementById('confirm-action').onclick = function() {
+                localStorage.removeItem('schoolData');
+                schoolData = {
+                    students: [],
+                    teachers: [],
+                    studentAttendance: [],
+                    teacherAttendance: [],
+                    feeRecords: [],
+                    salaryRecords: [],
+                    activities: [],
+                    settings: {
+                        schoolName: "EduManage Academy",
+                        schoolAddress: "123 Education Street, Knowledge City",
+                        adminName: "Badar Ahmad",
+                        adminEmail: "badar@edumanage.edu"
+                    }
+                };
+                saveData();
+                addActivity('System Reset', 'Badar Ahmad', 'All data has been reset');
+                updateDashboard();
+                modal.style.display = 'none';
+                alert('All data has been reset!');
+            };
+            
+            document.getElementById('cancel-action').onclick = function() {
+                modal.style.display = 'none';
+            };
+            
+            document.querySelector('.close-modal').onclick = function() {
+                modal.style.display = 'none';
+            };
+        }
+        
+        // Search functionality
+        document.getElementById('search-student-btn').addEventListener('click', searchStudents);
+        document.getElementById('search-teacher-btn').addEventListener('click', searchTeachers);
+        
+        function searchStudents() {
+            const query = document.getElementById('student-search').value.toLowerCase();
+            const tableBody = document.querySelector('#active-students-table tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                
+                if (id.includes(query) || name.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function searchTeachers() {
+            const query = document.getElementById('teacher-search').value.toLowerCase();
+            const tableBody = document.querySelector('#active-teachers-table tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const id = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+                
+                if (id.includes(query) || name.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        // Initialize the application
+        window.addEventListener('DOMContentLoaded', function() {
+            // Set current date for admission and joining
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('admissionDate').value = today;
+            document.getElementById('joiningDate').value = today;
+            
+            // Initialize data
+            initializeData();
+            
+            // Add close modal functionality
+            document.querySelectorAll('.close-modal').forEach(close => {
+                close.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target.classList.contains('modal')) {
+                    event.target.style.display = 'none';
+                }
+            });
+            
+            // Add event listeners for fee and salary records
+            document.getElementById('load-fee-records').addEventListener('click', loadFeeRecords);
+            document.getElementById('load-salary-records').addEventListener('click', loadSalaryRecords);
+        });
+    </script>
+</body>
+</html>
